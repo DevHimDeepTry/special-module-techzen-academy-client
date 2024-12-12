@@ -1,17 +1,15 @@
 import { createRouter } from 'vue-router';
 import MainLayout from '../common-layouts/MainLayout.vue';
 import { createWebHistory } from 'vue-router';
+import Dictionary from '../modules/dictionary/pages/Dictionary.vue';
 
 
 const routes = [
-  { path: '/', redirect: '/home' },
   {
-    path: '/home',
+    path: '/',
     component: MainLayout,
     children: [
-      { path: 'dictionary', component: "DictionaryPage" },
-      { path: 'calculator', component: "CalculatorPage" },
-      { path: 'employee-management', component: "EmployeeManagementPage" },
+      { path: 'dictionary', component: Dictionary},
     ],
   },
 ];
