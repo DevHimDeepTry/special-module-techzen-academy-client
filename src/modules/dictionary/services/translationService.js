@@ -19,8 +19,11 @@ export const fetchtranslationWord = (word) => {
       const response = await getTranslationWord(word.value);
       translationWord.value = response.data.data; 
     } catch (err) {
-      console.error('Có lỗi khi gọi API:', err);
-      error.value = 'Có lỗi khi lấy dữ liệu.'; 
+      if (err.response.data.message) {
+        error.value = err.response.data.message;
+      } else {
+        error.value = 'An unexpected error occurred.';
+      }
     } finally {
       loading.value = false;
     }

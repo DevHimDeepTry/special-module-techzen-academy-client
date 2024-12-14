@@ -3,6 +3,7 @@ import MainLayout from '../common-layouts/MainLayout.vue';
 import { createWebHistory } from 'vue-router';
 import Dictionary from '../modules/dictionary/pages/Dictionary.vue';
 import Calculator from '../modules/calculator/pages/Calculator.vue';
+import Employee from '../modules/employee/pages/Employee.vue';
 
 
 const routes = [
@@ -12,6 +13,7 @@ const routes = [
     children: [
       { path: 'dictionary', component: Dictionary},
       { path: 'calculator', component: Calculator},
+      { path: 'employee-management', component: Employee},
 
     ],
   },
