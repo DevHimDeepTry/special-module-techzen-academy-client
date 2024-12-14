@@ -49,6 +49,8 @@ const handleAddEmployee = async () => {
 
 // Cập nhật thông tin nhân viên
 const handleUpdateEmployee = async () => {
+  console.log("Updating..");
+  
   try {
     await updateEmployeeData(formData.value.id, formData.value);
     const index = employeeList.value.findIndex((e) => e.id === formData.value.id);
@@ -79,16 +81,13 @@ const handleDelete = async (id) => {
   }
 };
 
-const openForm = (employee ) => {
-  isEditing.value = !!employee;
-  formData.value = employee ? { ...employee } : {
-    id: null,
-    name: "",
-    dob: "",
-    gender: "",
-    salary: "",
-    phone: "",
-  };
+const openFormAdd = () => {
+  showForm.value = true
+}
+
+const openFormUpdate = (employee ) => {
+  isEditing.value = true;
+  formData.value = {...employee };
   showForm.value = true;
 };
 
@@ -104,6 +103,13 @@ const resetForm = () => {
     phone: "",
   };
   isEditing.value = false;
+};
+const handleSubmit = async () => {
+  if (isEditing.value) {
+    await handleUpdateEmployee();
+  } else {
+    await handleAddEmployee();
+  }
 };
 
 onMounted(() => {
@@ -122,7 +128,7 @@ onMounted(() => {
     <div v-if="loading" class="loading">Loading...</div>
 
     <div v-if="!loading">
-      <button @click="openForm">Add New Employee</button>
+      <button @click="openFormAdd">Add New Employee</button>
       <table v-if="employeeList.length > 0">
         <thead>
           <tr>
@@ -145,7 +151,7 @@ onMounted(() => {
             <td>{{ employee.phone }}</td>
             <td>
               <button @click="handleDetail(employee.id)">Detail</button>
-              <button @click="openForm(employee)">Edit</button>
+              <button @click="openFormUpdate(employee)">Edit</button>
               <button @click="handleDelete(employee.id)">Delete</button>
             </td>
           </tr>
@@ -155,40 +161,40 @@ onMounted(() => {
     </div>
 
     <!-- Form for adding/editing employee -->
-    <div v-if="showForm" class="form-overlay">
-      <div class="form-container">
-        <h2>{{ isEditing ? 'Edit Employee' : 'Add New Employee' }}</h2>
-        <form @submit.prevent="isEditing ? handleUpdateEmployee : handleAddEmployee">
-          <label>
-            Name:
-            <input v-model="formData.name" type="text" required />
-          </label>
-          <label>
-            Date of Birth:
-            <input v-model="formData.dob" type="date" required />
-          </label>
-          <label>
-            Gender:
-            <select v-model="formData.gender" required>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-          </label>
-          <label>
-            Salary:
-            <input v-model="formData.salary" type="number" required />
-          </label>
-          <label>
-            Phone:
-            <input v-model="formData.phone" type="text" required />
-          </label>
-          <div class="form-actions">
-            <button type="submit">{{ isEditing ? 'Update' : 'Add' }}</button>
-            <button type="button" @click="resetForm">Cancel</button>
-          </div>
-        </form>
+<div v-if="showForm" class="form-overlay">
+  <div class="form-container">
+    <h2>{{ isEditing ? 'Edit Employee' : 'Add New Employee' }}</h2>
+    <form @submit.prevent="handleSubmit">
+      <label>
+        Name:
+        <input v-model="formData.name" type="text" required />
+      </label>
+      <label>
+        Date of Birth:
+        <input v-model="formData.dob" type="date" required />
+      </label>
+      <label>
+        Gender:
+        <select v-model="formData.gender" required>
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+        </select>
+      </label>
+      <label>
+        Salary:
+        <input v-model="formData.salary" type="number" required />
+      </label>
+      <label>
+        Phone:
+        <input v-model="formData.phone" type="text" required />
+      </label>
+      <div class="form-actions">
+        <button type="submit">{{ isEditing ? 'Update' : 'Add' }}</button>
+        <button type="button" @click="resetForm">Cancel</button>
       </div>
-    </div>
+    </form>
+  </div>
+</div>
 
     <!-- Employee Detail Modal -->
     <div v-if="showDetail" class="detail-overlay">
@@ -239,7 +245,7 @@ tbody tr:nth-child(even) {
 }
 
 button {
-  border: 1px solid #53de09;
+  border: 1px solid #54de09aa;
   cursor: pointer;
 }
 
@@ -261,12 +267,21 @@ button:hover {
 }
 
 .form-container, .detail-container {
-  background-color: #53de09;
-
+  background-color: #54de09b0;
   padding: 20px;
   border-radius: 5px;
   max-width: 500px;
   width: 100%;
+}
+.form-container input, .detail-container input,
+.form-container select, .detail-container select {
+  width: 95%;
+  height: 40px;
+  padding: 5px;
+  border: 1px solid #54de09; 
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  color: #53de09;
 }
 
 .form-actions {
@@ -280,7 +295,8 @@ button:hover {
 }
 
 .detail-container {
-  background-color: #53de09;
+  background-color: #54de09b0;
   max-width: 400px;
 }
+
 </style>
