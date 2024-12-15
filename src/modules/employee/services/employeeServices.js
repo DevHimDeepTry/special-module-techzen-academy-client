@@ -1,9 +1,17 @@
+// employeeServices.js
 import { getAll, addEmployee, updateEmployee, getEmployeeById, deleteEmployee } from "../apis/employeeApis";
 
-export const readEmployeeList = async () => {
-  const res = await getAll();
-  return res.data.data;
+export const readEmployeeList = async (filters) => {
+  try {
+    const res = await getAll(filters);
+    console.log(res);
+    return res.data.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
+
 
 export const insertNewEmployee = async (data) => {
   const res = await addEmployee(data);

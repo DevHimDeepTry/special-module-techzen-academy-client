@@ -25,16 +25,30 @@ const formData = ref({
 const showDetail = ref(false);
 const selectedEmployee = ref(null);
 
+const filters = ref({
+  name: "",
+  dobFrom: "",
+  dobTo: "",
+  gender: "",
+  salaryRange: "",
+  phone: "",
+  departmentId: ""
+});
+
 // Fetch dữ liệu nhân viên
 const fetchEmployeeData = async () => {
   try {
-    employeeList.value = await readEmployeeList();
+    loading.value = true;
+    console.log(filters.value);
+    const response = await readEmployeeList(filters.value);
+    employeeList.value = response;
   } catch (error) {
     errorMessage.value = "Có lỗi xảy ra khi tải danh sách nhân viên";
   } finally {
     loading.value = false;
   }
 };
+
 
 // Thêm nhân viên mới
 const handleAddEmployee = async () => {
@@ -115,19 +129,50 @@ const handleSubmit = async () => {
 onMounted(() => {
   fetchEmployeeData();
 });
+
 </script>
 
 <template>
   <div>
     <h1>Employee Management</h1>
-
+    
     <div v-if="errorMessage" class="error">
       <p>{{ errorMessage }}</p>
     </div>
 
     <div v-if="loading" class="loading">Loading...</div>
 
+
     <div v-if="!loading">
+      <div>
+      <label>Search by Name:
+        <input v-model="filters.name" type="text" placeholder="Name" />
+      </label>
+      <label>Date of Birth (From):
+        <input v-model="filters.dobFrom" type="date" />
+      </label>
+      <label>Date of Birth (To):
+        <input v-model="filters.dobTo" type="date" />
+      </label>
+      <label>Gender:
+        <select v-model="filters.gender">
+          <option value="">Select Gender</option>
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+        </select>
+      </label>
+      <label>Salary Range:
+        <input v-model="filters.salaryRange" type="text" placeholder="Salary Range" />
+      </label>
+      <label>Phone:
+        <input v-model="filters.phone" type="text" placeholder="Phone" />
+      </label>
+      <label>Department:
+        <input v-model="filters.departmentId" type="text" placeholder="Department ID" />
+      </label>
+      <button @click="fetchEmployeeData">Search</button>
+    </div>
+
       <button @click="openFormAdd">Add New Employee</button>
       <table v-if="employeeList.length > 0">
         <thead>
