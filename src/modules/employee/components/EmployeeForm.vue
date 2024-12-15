@@ -1,44 +1,103 @@
-<script setup>
-import { ref, reactive } from 'vue';
-
-const employeeData = reactive({
-  id: '',
-  name: '',
-  dob: '',
-  gender: '',
-  salary: '',
-  phone: ''
-});
-
-const handleSubmit = () => {
-  emit('submit', { ...employeeData });
-};
-
-const resetForm = () => {
-  Object.keys(employeeData).forEach(key => (employeeData[key] = ''));
-};
-</script>
+<!-- EmployeeForm.vue -->
 
 <template>
-  <form @submit.prevent="handleSubmit">
-    <label for="name">Name:</label>
-    <input v-model="employeeData.name" type="text" id="name" required />
-
-    <label for="dob">Date of Birth:</label>
-    <input v-model="employeeData.dob" type="date" id="dob" required />
-
-    <label for="gender">Gender:</label>
-    <select v-model="employeeData.gender">
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
-    </select>
-
-    <label for="salary">Salary:</label>
-    <input v-model="employeeData.salary" type="number" id="salary" required />
-
-    <label for="phone">Phone:</label>
-    <input v-model="employeeData.phone" type="text" id="phone" required />
-
-    <button type="submit">Submit</button>
-  </form>
+  <div v-if="showForm" class="form-overlay">
+    <div class="form-container">
+      <h2>{{ isEditing ? 'Edit Employee' : 'Add New Employee' }}</h2>
+      <form @submit.prevent="handleSubmit">
+        <label>Name:
+          <input v-model="formData.name" type="text" required />
+        </label>
+        <label>Date of Birth:
+          <input v-model="formData.dob" type="date" required />
+        </label>
+        <label>Gender:
+          <select v-model="formData.gender" required>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+          </select>
+        </label>
+        <label>Salary:
+          <input v-model="formData.salary" type="number" required />
+        </label>
+        <label>Phone:
+          <input v-model="formData.phone" type="text" required />
+        </label>
+        <label>Department:
+          <select id="departmentId" v-model="formData.departmentId" required>
+            <option value="">Select Department</option>
+            <option v-for="department in departments" :key="department.id" :value="department.id">
+              {{ department.name }}
+            </option>
+          </select>
+        </label>
+        <div class="form-actions">
+          <button type="submit">{{ isEditing ? 'Update' : 'Add' }}</button>
+          <button type="button" @click="resetForm">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </template>
+
+<script>
+export default {
+  props: {
+    showForm: Boolean,
+    isEditing: Boolean,
+    formData: Object,
+    departments: Array
+  },
+  methods: {
+    handleSubmit() {
+      this.$emit("submit", this.formData);
+    },
+    resetForm() {
+      this.$emit("cancel");
+    }
+  }
+};
+</script>
+<style scoped>
+
+.form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-container {
+  background-color: #54de09b0;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.form-container input,
+.form-container select {
+  width: 95%;
+  height: 40px;
+  padding: 5px;
+  border: 1px solid #54de09;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  color: #53de09;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  padding: 8px 16px;
+}
+</style>
