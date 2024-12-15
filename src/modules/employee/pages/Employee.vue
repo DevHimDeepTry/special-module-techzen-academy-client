@@ -156,35 +156,37 @@ onMounted(() => {
 
 
     <div v-if="!loading">
-      <div>
-      <label>Search by Name:
-        <input v-model="filters.name" type="text" placeholder="Name" />
-      </label>
-      <label>Date of Birth (From):
-        <input v-model="filters.dobFrom" type="date" />
-      </label>
-      <label>Date of Birth (To):
-        <input v-model="filters.dobTo" type="date" />
-      </label>
-      <label>Gender:
-        <select v-model="filters.gender">
-          <option value="">Select Gender</option>
-          <option value="MALE">Male</option>
-          <option value="FEMALE">Female</option>
-        </select>
-      </label>
-      <label>Salary Range:
-        <input v-model="filters.salaryRange" type="text" placeholder="Salary Range" />
-      </label>
-      <label>Phone:
-        <input v-model="filters.phone" type="text" placeholder="Phone" />
-      </label>
-      <label>Department:
-        <input v-model="filters.departmentId" type="text" placeholder="Department ID" />
-      </label>
-      <button @click="fetchEmployeeData">Search</button>
-      <button @click="clearSearch">Clear Search</button>
-    </div>
+      <div class="search-form">
+        <label for="name">Search by Name:
+          <input id="name" v-model="filters.name" type="text" placeholder="Name" />
+        </label>
+        <label for="dobFrom">Date of Birth (From):
+          <input id="dobFrom" v-model="filters.dobFrom" type="date" />
+        </label>
+        <label for="dobTo">Date of Birth (To):
+          <input id="dobTo" v-model="filters.dobTo" type="date" />
+        </label>
+        <label for="gender">Gender:
+          <select id="gender" v-model="filters.gender">
+            <option value="">Select Gender</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+          </select>
+        </label>
+        <label for="salaryRange">Salary Range:
+          <input id="salaryRange" v-model="filters.salaryRange" type="text" placeholder="Salary Range" />
+        </label>
+        <label for="phone">Phone:
+          <input id="phone" v-model="filters.phone" type="text" placeholder="Phone" />
+        </label>
+        <label for="departmentId">Department:
+          <input id="departmentId" v-model="filters.departmentId" type="text" placeholder="Department ID" />
+        </label>
+        <div class="form-actions">
+          <button id="searchButton" @click="fetchEmployeeData">Search</button>
+          <button id="clearButton" @click="clearSearch">Clear Search</button>
+        </div>
+      </div>
 
       <button @click="openFormAdd">Add New Employee</button>
       <table v-if="employeeList.length > 0">
@@ -270,6 +272,62 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.search-form label {
+  font-size: 1rem;
+  color: #54de09;
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+}
+
+.search-form input,
+.search-form select {
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #54de09;
+  border-radius: 5px;
+  margin-top: 8px;
+}
+
+.search-form input[type="date"] {
+  cursor: pointer;
+}
+
+.search-form .form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.search-form button {
+  padding: 10px 16px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  transition: background-color 0.3s ease;
+}
+
+.search-form button:hover {
+  background-color: #45a049;
+}
+
+.search-form button#clearButton {
+  background-color: #f44336;
+}
+
+.search-form button#clearButton:hover {
+  background-color: #e53935;
+}
+
 /* Style for the employee management system */
 .error {
   color: red;
