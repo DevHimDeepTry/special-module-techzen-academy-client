@@ -34,6 +34,18 @@ const filters = ref({
   phone: "",
   departmentId: ""
 });
+const clearSearch = () => {
+  filters.value = {
+    name: "",
+    dobFrom: "",
+    dobTo: "",
+    gender: "",
+    salaryRange: "",
+    phone: "",
+    departmentId: ""
+  };
+  fetchEmployeeData();
+};
 
 // Fetch dữ liệu nhân viên
 const fetchEmployeeData = async () => {
@@ -171,6 +183,7 @@ onMounted(() => {
         <input v-model="filters.departmentId" type="text" placeholder="Department ID" />
       </label>
       <button @click="fetchEmployeeData">Search</button>
+      <button @click="clearSearch">Clear Search</button>
     </div>
 
       <button @click="openFormAdd">Add New Employee</button>
