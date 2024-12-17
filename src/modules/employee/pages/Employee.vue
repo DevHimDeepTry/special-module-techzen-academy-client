@@ -1,3 +1,4 @@
+<!-- Employee.vue -->
 <script setup>
 import { ref, onMounted } from "vue";
 import {
@@ -19,6 +20,8 @@ const loading = ref(true);
 const errorMessage = ref(null);
 const showForm = ref(false);
 const isEditing = ref(false);
+const totalItems = ref(0);
+const totalPages = ref(0);
 const formData = ref({
   id: null,
   name: "",
@@ -30,6 +33,11 @@ const formData = ref({
 const showDetail = ref(false);
 const selectedEmployee = ref(null);
 
+const pagination = ref({
+  page: 0,
+  size: 10,
+});
+
 const filters = ref({
   name: "",
   dobFrom: "",
@@ -37,7 +45,7 @@ const filters = ref({
   gender: "",
   salaryRange: "",
   phone: "",
-  departmentId: ""
+  departmentId: "",
 });
 const clearSearch = () => {
   filters.value = {
@@ -47,8 +55,9 @@ const clearSearch = () => {
     gender: "",
     salaryRange: "",
     phone: "",
-    departmentId: ""
+    departmentId: "",
   };
+  pagination.value = { page: 0, size: 10 };
   fetchEmployeeData();
 };
 
@@ -57,8 +66,10 @@ const fetchEmployeeData = async () => {
   try {
     loading.value = true;
     console.log(filters.value);
-    const response = await readEmployeeList(filters.value);
-    employeeList.value = response;
+    const response = await readEmployeeList(filters.value, pagination.value);
+    employeeList.value = response.content;
+    totalItems.value = response.page.totalElements;
+    totalPages.value = response.page.totalPages;
   } catch (error) {
     errorMessage.value = "Có lỗi xảy ra khi tải danh sách nhân viên";
   } finally {
@@ -159,6 +170,19 @@ const getDepartmentName = (departmentId) => {
 const department = departments.value.find(dept => dept.id === departmentId);
   return department ? department.name : 'Unknown';
 };
+
+const changePage = (page) => {
+  if (page >= 0 && page < totalPages.value) {
+    pagination.value.page = page;
+    fetchEmployeeData();
+  }
+};
+
+const changePageSize = (size) => {
+  pagination.value.size = size;
+  pagination.value.page = 0;
+  fetchEmployeeData();
+};
 </script>
 
 <template>
@@ -166,8 +190,20 @@ const department = departments.value.find(dept => dept.id === departmentId);
   <h1>Employee Management</h1>
 
   <SearchForm :filters="filters" :departments="departments" @search="fetchEmployeeData" @clear="clearSearch" />
-  <EmployeeTable :employeeList="employeeList" :getDepartmentName="getDepartmentName" @view-detail="handleDetail" @edit="openFormUpdate" @delete="handleDelete" @add="openFormAdd" />
-  <EmployeeForm :showForm="showForm" :isEditing="isEditing" :formData="formData" :departments="departments" @submit="handleSubmit" @cancel="resetForm" />
+  <EmployeeTable
+      :pagination="pagination"
+      :totalPages="totalPages"
+      @changePage="changePage"
+      @changePageSize="changePageSize"
+      :employeeList="employeeList"
+      :getDepartmentName="getDepartmentName"
+      @view-detail="handleDetail"
+      @edit="openFormUpdate"
+      @delete="handleDelete"
+      @add="openFormAdd"
+    />
+  <!-- <EmployeeTable  :pagination="pagination"  @changePage="changePage" @changePageSize="changePageSize"  :employeeList="employeeList" :getDepartmentName="getDepartmentName" @view-detail="handleDetail" @edit="openFormUpdate" @delete="handleDelete" @add="openFormAdd" /> -->
+  <EmployeeForm  :showForm="showForm" :isEditing="isEditing" :formData="formData" :departments="departments" @submit="handleSubmit" @cancel="resetForm" />
 </div>
 </template>
 

@@ -2,10 +2,9 @@
 import { getDepartments } from "../apis/departmentApis";
 import { getAll, addEmployee, updateEmployee, getEmployeeById, deleteEmployee } from "../apis/employeeApis";
 
-export const readEmployeeList = async (filters) => {
+export const readEmployeeList = async (filters, pagination) => {
   try {
-    const res = await getAll(filters);
-    console.log(res);
+    const res = await getAll(filters,pagination);
     return res.data.data;
   } catch (error) {
     console.error(error);
@@ -37,6 +36,6 @@ export const removeEmployee = async (id) => {
 };
 
 export const updateEmployeeData = async (id, newData) => {
-    const response = await updateEmployee(id, newData);
+    const response = await updateEmployee(newData.id, newData);
     return response.data.data;
 };

@@ -1,5 +1,6 @@
 <!-- EmployeeTable.vue -->
 <template>
+  <div>
     <button @click="openFormAdd">Add New Employee</button>
     <table v-if="employeeList.length > 0">
       <thead>
@@ -22,7 +23,7 @@
           <td>{{ employee.gender }}</td>
           <td>{{ employee.salary }}</td>
           <td>{{ employee.phone }}</td>
-          <td>{{ getDepartmentName(employee.departmentId) }}</td>
+          <td>{{ getDepartmentName(employee.department.id) }}</td>
           <td>
             <button @click="handleDetail(employee.id)">Detail</button>
             <button @click="openFormUpdate(employee)">Edit</button>
@@ -31,62 +32,92 @@
         </tr>
       </tbody>
     </table>
-    <p v-if="employeeList.length === 0">No employees found.</p>
-  </template>
-  
-  <script>
-  export default {
-    props: {
-      employeeList: Array,
-      getDepartmentName: Function
+    <p v-else>No employees found.</p>
+
+    <!-- Phân trang -->
+    <div class="pagination-controls">
+      <button :disabled="pagination.page === 0" @click="changePage(pagination.page - 1)">Previous</button>
+      <span>
+        Page {{ pagination.page + 1 }} of {{ totalPages }}
+      </span>
+      <button :disabled="pagination.page >= totalPages - 1" @click="changePage(pagination.page + 1)">Next</button>
+
+      <!-- Chọn số phần tử trên mỗi trang -->
+      <select v-model="pagination.size" @change="onSizeChange">
+        <option :value="10">10</option>
+        <option :value="20">20</option>
+        <option :value="30">30</option>
+        <option :value="50">50</option>
+      </select>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    employeeList: Array,
+    getDepartmentName: Function,
+    pagination: Object,
+    totalPages: Number,
+  },
+  methods: {
+    handleDetail(id) {
+      this.$emit("view-detail", id);
     },
-    methods: {
-      handleDetail(id) {
-        this.$emit("view-detail", id);
-      },
-      openFormUpdate(employee) {
-        this.$emit("edit", employee);
-      },
-      handleDelete(id) {
-        this.$emit("delete", id);
-      },
-      openFormAdd() {
-        this.$emit("add");
-      }
-    }
-  };
-  </script>
-  
+    openFormUpdate(employee) {
+      this.$emit("edit", employee);
+    },
+    handleDelete(id) {
+      this.$emit("delete", id);
+    },
+    openFormAdd() {
+      this.$emit("add");
+    },
+    changePage(page) {
+      this.$emit("changePage", page);
+    },
+    onSizeChange() {
+      this.$emit("changePageSize", this.pagination.size);
+    },
+  },
+};
+</script>
+
 <style scoped>
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
+.pagination-controls {
+  margin-top: 20px;
+}
 
-  th, td {
-    padding: 12px;
-    border: 1px solid #53de09;
-    text-align: left;
-  }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
 
-  th {
-    color: #53de09;
-  }
+th, td {
+  padding: 12px;
+  border: 1px solid #53de09;
+  text-align: left;
+}
 
-  tbody tr:nth-child(even) {
-    background-color: #3d3c3c;
-  }
+th {
+  color: #53de09;
+}
 
-  button {
-    border: 1px solid #54de09aa;
-    cursor: pointer;
-  }
+tbody tr:nth-child(even) {
+  background-color: #3d3c3c;
+}
 
-  button:hover {
-    background-color: #53de09;
-    color: white;
-  }
+button {
+  border: 1px solid #54de09aa;
+  cursor: pointer;
+  margin-right: 10px;
+}
 
-  </style>
+button:hover {
+  background-color: #53de09;
+  color: white;
+}
+
+</style>
